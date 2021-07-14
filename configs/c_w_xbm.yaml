@@ -1,0 +1,52 @@
+# Copyright (c) Malong Technologies Co., Ltd.
+# All rights reserved.
+#
+# Contact: github@malong.com
+#
+# This source code is licensed under the LICENSE file in the root directory of this source tree.
+
+NAME: contrastive
+#EXPERIMENT_NAME: ""
+
+MODEL:
+  BACKBONE:
+    NAME: googlenet
+  HEAD:
+    DIM: 16
+    IN_CHANNELS: 1024
+
+LOSSES:
+  NAME: 'dch_loss'
+
+INPUT:
+  MODE: RGB
+  PIXEL_MEAN: [0.485, 0.456, 0.406]
+  PIXEL_STD: [0.229, 0.224, 0.225]
+
+
+SOLVER:
+  MAX_ITERS: 40000
+  STEPS: 2
+  OPTIMIZER_NAME: Adam
+  BASE_LR: 0.0001 
+  WEIGHT_DECAY: 0.0005
+
+  
+DATA:
+  TRAIN_IMG_SOURCE: ./hash_data/cifar10/train.txt
+  GALLERY_IMG_SOURCE: ./hash_data/cifar10/database.txt
+  QUERY_IMG_SOURCE : ./hash_data/cifar10/test.txt
+  TRAIN_BATCHSIZE: 64
+  TEST_BATCHSIZE: 256
+  NUM_WORKERS: 16
+  NUM_INSTANCES: 4
+
+VALIDATION:
+  VERBOSE: 1000
+  TOPK: 54000
+
+XBM:
+  ENABLE: True
+  WEIGHT: 1.0
+  SIZE: 55000
+  START_ITERATION: 2000

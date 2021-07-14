@@ -9,7 +9,7 @@ from .multi_similarity_loss import MultiSimilarityLoss
 from .contrastive_loss import ContrastiveLoss
 from .triplet_loss import TripletLoss
 from .registry import LOSS
-
+from .dch_loss import DCHLoss
 
 def build_loss(cfg):
     loss_name = cfg.LOSSES.NAME

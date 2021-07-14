@@ -78,6 +78,8 @@ def do_train(
 
             # print("calculating dataset binary code.......")\
             gallery_codes, gallery_labels = compute_result(gallery_loader, model, device=device)
+            logger.info(f"The query codes have shape {query_codes.shape}")
+            logger.info(f"The gallery codes have shape {gallery_codes.shape}")
             map_curr, cum_prec, cum_recall = CalcTopMap(query_codes.numpy(), gallery_codes.numpy(), query_labels.numpy(), gallery_labels.numpy(), cfg.VALIDATION.TOPK)
             logger.info(f"The mAP after iteration {iteration} is {map_curr}")
             if map_curr > best_map:
@@ -85,10 +87,6 @@ def do_train(
                 logger.info(f"The best map so far is {best_map}")
                 # torch.save(model.state_dict(),
                 #                os.path.join(config["save_path"], config["dataset"] + "-" + str(mAP) + "-model.pt"))
-
-
-
-
 
             # labels = val_loader[0].dataset.label_list
             # labels = np.array([int(k) for k in labels])
