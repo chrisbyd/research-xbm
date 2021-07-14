@@ -10,7 +10,7 @@
 import os
 import re
 from collections import defaultdict
-
+import numpy as np
 from torch.utils.data import Dataset
 from ret_benchmark.utils.img_reader import read_image
 
@@ -31,7 +31,7 @@ class BaseDataSet(Dataset):
         self.label_list = list()
         self.path_list = list()
         self._load_data()
-        self.label_index_dict = self._build_label_index_dict()
+     #   self.label_index_dict = self._build_label_index_dict()
 
     def __len__(self):
         return len(self.label_list)
@@ -40,12 +40,12 @@ class BaseDataSet(Dataset):
         return self.__str__()
 
     def __str__(self):
-        return f"| Dataset Info |datasize: {self.__len__()}|num_labels: {len(set(self.label_list))}|"
+        return f"| Dataset Info |datasize: {self.__len__()}|"
 
     def _load_data(self):
         with open(self.img_source, "r") as f:
             for line in f:
-                _path, _label = re.split(r",", line.strip())
+                _path, _label = line.split()[0], np.array([int(la) for la in line.split()[1:]]).astype(np.float32)
                 self.path_list.append(_path)
                 self.label_list.append(_label)
 

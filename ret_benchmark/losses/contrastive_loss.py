@@ -21,12 +21,14 @@ class ContrastiveLoss(nn.Module):
         sim_mat = torch.matmul(inputs_col, inputs_row.t())
         epsilon = 1e-5
         loss = list()
-
+ 
         neg_count = list()
+        #compute label similariy matrix
+        sim_label = torch.matmul(targets_col,target_row.transpose(0,1)) >0
         for i in range(n):
-            pos_pair_ = torch.masked_select(sim_mat[i], targets_col[i] == target_row)
+            pos_pair_ = torch.masked_select(sim_mat[i], sim_label[i])
             pos_pair_ = torch.masked_select(pos_pair_, pos_pair_ < 1 - epsilon)
-            neg_pair_ = torch.masked_select(sim_mat[i], targets_col[i] != target_row)
+            neg_pair_ = torch.masked_select(sim_mat[i], sim_label[i])
 
             neg_pair = torch.masked_select(neg_pair_, neg_pair_ > self.margin)
 

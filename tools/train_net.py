@@ -28,7 +28,8 @@ resource.setrlimit(resource.RLIMIT_NOFILE, (2048, rlimit[1]))
 
 
 def train(cfg):
-    logger = setup_logger(name="Train", level=cfg.LOGGER.LEVEL)
+    name = cfg.NAME +"_" +cfg.MODEL.BACKBONE.NAME + "_" + str(cfg.MODEL.HEAD.DIM)
+    logger = setup_logger(name=name, save_dir= cfg.SAVE_DIR, if_train=True)
     logger.info(cfg)
     model = build_model(cfg)
     device = torch.device(cfg.MODEL.DEVICE)

@@ -36,7 +36,7 @@ def build_data(cfg, is_train=True):
         elif cfg.DATA.SAMPLE == "Random":
             data_loader = DataLoader(
                 dataset,
-                collate_fn=collate_fn,
+             #   collate_fn=collate_fn,
                 shuffle=True,
                 batch_size=cfg.DATA.TRAIN_BATCHSIZE,
                 drop_last=True,
@@ -49,15 +49,16 @@ def build_data(cfg, is_train=True):
     else:
         all_data_loader = list()
         for x in [
-            cfg.DATA.TEST_IMG_SOURCE,
+            cfg.DATA.TRAIN_IMG_SOURCE,
             cfg.DATA.QUERY_IMG_SOURCE,
-            cfg.DATA.PKUVID_IMG_SOURCE,
+            cfg.DATA.GALLERY_IMG_SOURCE
+           
         ]:
             if len(x) != 0:
                 dataset = BaseDataSet(x, transforms=transforms, mode=cfg.INPUT.MODE)
                 data_loader = DataLoader(
                     dataset,
-                    collate_fn=collate_fn,
+             #       collate_fn=collate_fn,
                     shuffle=False,
                     batch_size=cfg.DATA.TEST_BATCHSIZE,
                     num_workers=cfg.DATA.NUM_WORKERS,

@@ -16,7 +16,7 @@ from ret_benchmark.utils.feat_extractor import feat_extractor
 from ret_benchmark.utils.metric_logger import MetricLogger
 from ret_benchmark.utils.log_info import log_info
 from ret_benchmark.modeling.xbm import XBM
-
+from ret_benchmark.data.evaluations.hash_eval import *
 
 def flush_log(writer, iteration):
     for k, v in log_info.items():
@@ -48,7 +48,7 @@ def do_train(
     max_iter = cfg.SOLVER.MAX_ITERS
 
     best_iteration = -1
-    best_mapr = 0
+    best_map = 0
 
     start_training_time = time.time()
     end = time.time()
@@ -72,24 +72,41 @@ def do_train(
         ) and iteration > 0:
             model.eval()
             logger.info("Validation")
+            query_loader = val_loader[1]
+            gallery_loader = val_loader[2]
+            query_codes, query_labels = compute_result(query_loader, model, device=device)
 
-            labels = val_loader[0].dataset.label_list
-            labels = np.array([int(k) for k in labels])
-            feats = feat_extractor(model, val_loader[0], logger=logger)
-            ret_metric = AccuracyCalculator(include=("precision_at_1", "mean_average_precision_at_r", "r_precision"), exclude=())
-            ret_metric = ret_metric.get_accuracy(feats, feats, labels, labels, True)
-            mapr_curr = ret_metric['mean_average_precision_at_r']
-            for k, v in ret_metric.items():
-                log_info[f"e_{k}"] = v
+            # print("calculating dataset binary code.......")\
+            gallery_codes, gallery_labels = compute_result(gallery_loader, model, device=device)
+            map_curr, cum_prec, cum_recall = CalcTopMap(query_codes.numpy(), gallery_codes.numpy(), query_labels.numpy(), gallery_labels.numpy(), cfg.VALIDATION.TOPK)
+            logger.info(f"The mAP after iteration {iteration} is {map_curr}")
+            if map_curr > best_map:
+                best_map = map_curr
+                logger.info(f"The best map so far is {best_map}")
+                # torch.save(model.state_dict(),
+                #                os.path.join(config["save_path"], config["dataset"] + "-" + str(mAP) + "-model.pt"))
 
-            scheduler.step(log_info[f"R@1"])
-            log_info["lr"] = optimizer.param_groups[0]["lr"]
-            if mapr_curr > best_mapr:
-                best_mapr = mapr_curr
-                best_iteration = iteration
-                logger.info(f"Best iteration {iteration}: {ret_metric}")
-            else:
-                logger.info(f"Performance at iteration {iteration:06d}: {ret_metric}")
+
+
+
+
+            # labels = val_loader[0].dataset.label_list
+            # labels = np.array([int(k) for k in labels])
+            # feats = feat_extractor(model, val_loader[0], logger=logger)
+            # ret_metric = AccuracyCalculator(include=("precision_at_1", "mean_average_precision_at_r", "r_precision"), exclude=())
+            # ret_metric = ret_metric.get_accuracy(feats, feats, labels, labels, True)
+            # mapr_curr = ret_metric['mean_average_precision_at_r']
+            # for k, v in ret_metric.items():
+            #     log_info[f"e_{k}"] = v
+
+            # scheduler.step(log_info[f"R@1"])
+            # log_info["lr"] = optimizer.param_groups[0]["lr"]
+            # if mapr_curr > best_mapr:
+            #     best_mapr = mapr_curr
+            #     best_iteration = iteration
+            #     logger.info(f"Best iteration {iteration}: {ret_metric}")
+            # else:
+            #     logger.info(f"Performance at iteration {iteration:06d}: {ret_metric}")
             flush_log(writer, iteration)
 
         model.train()

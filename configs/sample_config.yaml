@@ -6,13 +6,14 @@
 # This source code is licensed under the LICENSE file in the root directory of this source tree.
 
 NAME: contrastive
+#EXPERIMENT_NAME: ""
 
 MODEL:
   BACKBONE:
-    NAME: resnet50
+    NAME: googlenet
   HEAD:
-    DIM: 128
-    IN_CHANNELS: 2048
+    DIM: 16
+    IN_CHANNELS: 1024
 
 LOSSES:
   NAME: 'contrastive_loss'
@@ -29,17 +30,20 @@ SOLVER:
   OPTIMIZER_NAME: Adam
   BASE_LR: 0.0001 
   WEIGHT_DECAY: 0.0005
+
   
 DATA:
-  TRAIN_IMG_SOURCE: path for train.txt 
-  TEST_IMG_SOURCE: path for test.txt
+  TRAIN_IMG_SOURCE: ./hash_data/cifar10/train.txt
+  GALLERY_IMG_SOURCE: ./hash_data/cifar10/database.txt
+  QUERY_IMG_SOURCE : ./hash_data/cifar10/test.txt
   TRAIN_BATCHSIZE: 64
   TEST_BATCHSIZE: 256
   NUM_WORKERS: 16
   NUM_INSTANCES: 4
 
 VALIDATION:
-  VERBOSE: 1000
+  VERBOSE: 400
+  TOPK: 54000
 
 XBM:
   ENABLE: True

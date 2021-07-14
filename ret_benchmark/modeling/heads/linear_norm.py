@@ -9,10 +9,16 @@ from ret_benchmark.utils.init_methods import weights_init_kaiming
 class LinearNorm(nn.Module):
     def __init__(self, cfg):
         super(LinearNorm, self).__init__()
-        self.fc = nn.Linear(cfg.MODEL.HEAD.IN_CHANNELS, cfg.MODEL.HEAD.DIM)
-        self.fc.apply(weights_init_kaiming)
+        self.module = nn.Sequential(
+            nn.Linear(cfg.MODEL.HEAD.IN_CHANNELS, 512),
+            nn.BatchNorm1d(512),
+            nn.ReLU(True),
+            nn.Linear(512, cfg.MODEL.HEAD.DIM),
+            nn.Tanh()
+        )
+        
+        self.module.apply(weights_init_kaiming)
 
     def forward(self, x):
-        x = self.fc(x)
-        x = nn.functional.normalize(x, p=2, dim=1)
+        x = self.module(x)
         return x

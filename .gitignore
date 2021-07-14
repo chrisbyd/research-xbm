@@ -29,3 +29,4 @@ gradlew.bat
 unused.txt
 output/
 *.egg-info/
+hash_data
