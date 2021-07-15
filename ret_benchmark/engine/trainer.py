@@ -118,12 +118,14 @@ def do_train(
         feats = model(images)
 
         if cfg.XBM.ENABLE and iteration > cfg.XBM.START_ITERATION:
+            #logger.info("START storing features in memory")
             xbm.enqueue_dequeue(feats.detach(), targets.detach())
 
         loss = criterion(feats, targets, feats, targets)
         log_info["batch_loss"] = loss.item()
 
         if cfg.XBM.ENABLE and iteration > cfg.XBM.START_ITERATION:
+           # logger.info('Start computing loss with the features inside of the memory')
             xbm_feats, xbm_targets = xbm.get()
             xbm_loss = criterion(feats, targets, xbm_feats, xbm_targets)
             log_info["xbm_loss"] = xbm_loss.item()
@@ -176,5 +178,5 @@ def do_train(
         )
     )
 
-    logger.info(f"Best iteration: {best_iteration :06d} | best MAP@R {best_mapr} ")
+    logger.info(f"Best iteration: {best_iteration :06d} | best MAP@R {best_map} ")
     writer.close()
