@@ -10,9 +10,10 @@ NAME: dch_w_xbm
 
 MODEL:
   BACKBONE:
-    NAME: googlenet
+    NAME: alexnet
   HEAD:
     DIM: 16
+    NAME: alexhead     # [alexhead, linear_norm]
     IN_CHANNELS: 1024
 
 LOSSES:
@@ -36,18 +37,18 @@ DATA:
   TRAIN_IMG_SOURCE: ./hash_data/cifar10/train.txt
   GALLERY_IMG_SOURCE: ./hash_data/cifar10/database.txt
   QUERY_IMG_SOURCE : ./hash_data/cifar10/test.txt
-  TRAIN_BATCHSIZE: 64
-  TEST_BATCHSIZE: 256
+  TRAIN_BATCHSIZE: 100
+  TEST_BATCHSIZE: 800
   LABEL_DIM : 10
-  NUM_WORKERS: 16
+  NUM_WORKERS: 8
   NUM_INSTANCES: 4
 
 VALIDATION:
-  VERBOSE: 1000
+  VERBOSE: 500
   TOPK: 54000
 
 XBM:
   ENABLE: True
   WEIGHT: 1.0
   SIZE: 55000
-  START_ITERATION: 1500
+  START_ITERATION: 800

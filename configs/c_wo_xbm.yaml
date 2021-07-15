@@ -10,9 +10,10 @@ NAME: dch_wo_xbm
 
 MODEL:
   BACKBONE:
-    NAME: googlenet
+    NAME: alexnet
   HEAD:
     DIM: 16
+    NAME: alexhead
     IN_CHANNELS: 1024
 
 LOSSES:
@@ -38,7 +39,7 @@ DATA:
   QUERY_IMG_SOURCE : ./hash_data/cifar10/test.txt
   TRAIN_BATCHSIZE: 64
   TEST_BATCHSIZE: 256
-  NUM_WORKERS: 16
+  NUM_WORKERS: 8
   NUM_INSTANCES: 4
 
 VALIDATION:

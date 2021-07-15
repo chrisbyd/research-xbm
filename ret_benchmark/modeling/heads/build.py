@@ -1,6 +1,7 @@
 from ret_benchmark.modeling.registry import HEADS
 
 from .linear_norm import LinearNorm
+from .alex_head import AlexHead
 
 
 def build_head(cfg):

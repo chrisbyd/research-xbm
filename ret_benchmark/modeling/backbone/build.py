@@ -3,7 +3,7 @@ from ret_benchmark.modeling.registry import BACKBONES
 from .bninception import BNInception
 from .resnet import ResNet18, ResNet50
 from .googlenet import GoogLeNet
-
+from.alexnet import AlexNet
 
 def build_backbone(cfg):
     assert (
